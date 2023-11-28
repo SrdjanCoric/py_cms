@@ -5,6 +5,10 @@
   <title>File List</title>
 </head>
 <body>
+  {% if session.get('message') %}
+    <p>{{ session.pop('message') }}</p>
+  {% endif %}
+
   <ul>
     {% for file in files %}
       <li><a href="/{{ file }}">{{ file }}</a></li>

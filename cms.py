@@ -1,7 +1,9 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, session, redirect, url_for, render_template, send_from_directory
 import os
 
 app = Flask(__name__)
+
+app.secret_key = 'secret'
 
 @app.route("/")
 def index():
@@ -14,7 +16,13 @@ def index():
 def file_content(filename):
     root = os.path.abspath(os.path.dirname(__file__))
     data_dir = os.path.join(root, "data")
-    return send_from_directory(data_dir, filename, as_attachment=False)
+    file_path = os.path.join(data_dir, filename)
+
+    if os.path.isfile(file_path):
+        return send_from_directory(data_dir, filename, as_attachment=False)
+    else:
+        session['message'] = f"{filename} does not exist."
+        return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=5003)

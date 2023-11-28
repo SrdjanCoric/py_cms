@@ -22,5 +22,17 @@ class CMSTest(unittest.TestCase):
             self.assertEqual(response.content_type, "text/plain; charset=utf-8")
             self.assertIn("Python 0.9.0 (initial release) is released.", response.get_data(as_text=True))
 
+    def test_document_not_found(self):
+        response = self.client.get("/notafile.ext")
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.get(response.headers['Location'])  #
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("notafile.ext does not exist", response.get_data(as_text=True))
+
+        response = self.client.get("/")
+        self.assertNotIn("notafile.ext does not exist", response.get_data(as_text=True))
+
+
 if __name__ == '__main__':
     unittest.main()
