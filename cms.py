@@ -17,4 +17,4 @@ def file_content(filename):
     return send_from_directory(data_dir, filename, as_attachment=False)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5003)
