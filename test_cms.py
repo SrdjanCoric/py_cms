@@ -12,7 +12,7 @@ class CMSTest(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content_type, "text/html; charset=utf-8")
-        self.assertIn("about.txt", response.get_data(as_text=True))
+        self.assertIn("about.md", response.get_data(as_text=True))
         self.assertIn("changes.txt", response.get_data(as_text=True))
         self.assertIn("history.txt", response.get_data(as_text=True))
 

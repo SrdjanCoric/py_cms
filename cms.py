@@ -1,9 +1,12 @@
 from flask import Flask, session, redirect, url_for, render_template, send_from_directory
 import os
 
+from markdown import markdown
+
 app = Flask(__name__)
 
 app.secret_key = 'secret'
+
 
 @app.route("/")
 def index():
@@ -19,7 +22,12 @@ def file_content(filename):
     file_path = os.path.join(data_dir, filename)
 
     if os.path.isfile(file_path):
-        return send_from_directory(data_dir, filename, as_attachment=False)
+            if filename.endswith('.md'):
+                with open(file_path, 'r') as file:
+                    content = file.read()
+                return markdown(content)
+            else:
+                return send_from_directory(data_dir, filename, as_attachment=False)
     else:
         session['message'] = f"{filename} does not exist."
         return redirect(url_for('index'))
