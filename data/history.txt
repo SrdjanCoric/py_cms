@@ -1,19 +1,16 @@
-1993 - Yukihiro Matsumoto dreams up Ruby.
-1995 - Ruby 0.95 released.
-1996 - Ruby 1.0 released.
-1998 - Ruby 1.2 released.
-1999 - Ruby 1.4 released.
-2000 - Ruby 1.6 released.
-2003 - Ruby 1.8 released.
-2007 - Ruby 1.9 released.
-2013 - Ruby 2.0 released.
-2013 - Ruby 2.1 released.
-2014 - Ruby 2.2 released.
-2015 - Ruby 2.3 released.
-2016 - Ruby 2.4 released.
-2017 - Ruby 2.5 released.
-2018 - Ruby 2.6 released.
-2019 - Ruby 2.7 released.
-2020 - Ruby 3.0 released.
-2021 - Ruby 3.1 released.
-2022 - Ruby 3.2 released.
+1989 - Guido van Rossum starts developing Python.
+1991 - Python 0.9.0 (initial release) is released.
+1994 - Python 1.0 is released.
+2000 - Python 2.0 is released.
+2008 - Python 3.0 is released.
+2010 - Python 2.7 is released.
+2011 - Python 3.2 is released.
+2012 - Python 3.3 is released.
+2014 - Python 3.4 is released.
+2015 - Python 3.5 is released.
+2016 - Python 3.6 is released.
+2018 - Python 3.7 is released.
+2019 - Python 3.8 is released.
+2020 - Python 3.9 is released.
+2021 - Python 3.10 is released.
+2022 - Python 3.11 is released.
