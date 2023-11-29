@@ -82,6 +82,18 @@ def create_file():
         flash(f"{filename} has been created.")
         return redirect(url_for('index'))
 
+@app.route("/<filename>/delete", methods=['POST'])
+def delete_file(filename):
+    data_dir = get_data_path()
+    file_path = os.path.join(data_dir, filename)
+
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+        flash(f"{filename} has been deleted.")
+    else:
+        flash(f"{filename} does not exist.")
+
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=5003)
