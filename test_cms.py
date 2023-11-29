@@ -1,6 +1,7 @@
 import unittest
 import os
 import shutil
+import bcrypt
 from cms import app
 
 class CMSTest(unittest.TestCase):
@@ -11,11 +12,14 @@ class CMSTest(unittest.TestCase):
         self.data_path = os.path.join(os.path.dirname(__file__), 'test', 'data')
         os.makedirs(self.data_path, exist_ok=True)
 
+    def sign_in_user(self, client):
+        response = client.post('/users/signin', data={'username': 'admin', 'password': 'secret'}, follow_redirects=True)
+        return response
+
     def admin_session(self):
         with self.client as c:
-            with c.session_transaction() as sess:
-                sess['username'] = 'admin'
-            return c
+            self.sign_in_user(c)
+        return c
 
     def tearDown(self):
         shutil.rmtree(self.data_path, ignore_errors=True)

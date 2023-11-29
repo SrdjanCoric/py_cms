@@ -2,6 +2,7 @@ from flask import Flask, session, redirect, url_for, request, render_template, s
 from functools import wraps
 import os
 import yaml
+import bcrypt
 
 from markdown import markdown
 
@@ -9,11 +10,10 @@ app = Flask(__name__)
 
 app.secret_key = 'secret'
 
+app.config['TESTING'] = True
+
 def get_data_path():
-    if app.config['TESTING']:
-        return os.path.join(os.path.dirname(__file__), 'test', 'data')
-    else:
-        return os.path.join(os.path.dirname(__file__), 'data')
+    return os.path.join(os.path.dirname(__file__), 'data')
 
 def user_signed_in():
     return 'username' in session
@@ -34,6 +34,15 @@ def load_user_credentials():
     credentials_path = os.path.join(os.path.dirname(__file__), filename)
     with open(credentials_path, 'r') as file:
         return yaml.safe_load(file)
+
+def valid_credentials(username, password):
+    credentials = load_user_credentials()
+
+    if username in credentials:
+        stored_password = credentials[username].encode('utf-8')
+        return bcrypt.checkpw(password.encode('utf-8'), stored_password)
+    else:
+        return False
 
 @app.route("/")
 def index():
@@ -128,11 +137,10 @@ def show_signin_form():
 
 @app.route("/users/signin", methods=['POST'])
 def signin():
-    credentials = load_user_credentials()
     username = request.form.get('username')
     password = request.form.get('password')
 
-    if username in credentials and credentials[username] == password:
+    if valid_credentials(username, password):
         session['username'] = username
         flash("Welcome!")
         return redirect(url_for('index'))
