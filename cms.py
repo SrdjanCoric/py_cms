@@ -1,4 +1,5 @@
 from flask import Flask, session, redirect, url_for, request, render_template, send_from_directory, flash
+from functools import wraps
 import os
 
 from markdown import markdown
@@ -12,6 +13,21 @@ def get_data_path():
         return os.path.join(os.path.dirname(__file__), 'test', 'data')
     else:
         return os.path.join(os.path.dirname(__file__), 'data')
+
+def user_signed_in():
+    return 'username' in session
+
+from functools import wraps
+
+def require_signed_in_user(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not user_signed_in():
+            flash("You must be signed in to do that.")
+            return redirect(url_for('show_signin_form'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 @app.route("/")
 def index():
@@ -36,6 +52,7 @@ def file_content(filename):
         return redirect(url_for('index'))
 
 @app.route("/<filename>/edit")
+@require_signed_in_user
 def edit_file(filename):
     data_dir = get_data_path()
     file_path = os.path.join(data_dir, filename)
@@ -49,6 +66,7 @@ def edit_file(filename):
         return redirect(url_for('index'))
 
 @app.route("/<filename>", methods=['POST'])
+@require_signed_in_user
 def save_file(filename):
     data_dir = get_data_path()
     file_path = os.path.join(data_dir, filename)
@@ -61,10 +79,12 @@ def save_file(filename):
     return redirect(url_for('index'))
 
 @app.route("/new")
+@require_signed_in_user
 def new_document():
     return render_template('new.html')
 
 @app.route("/create", methods=['POST'])
+@require_signed_in_user
 def create_file():
     filename = request.form.get('filename', '').strip()
     data_dir = get_data_path()
@@ -83,6 +103,7 @@ def create_file():
         return redirect(url_for('index'))
 
 @app.route("/<filename>/delete", methods=['POST'])
+@require_signed_in_user
 def delete_file(filename):
     data_dir = get_data_path()
     file_path = os.path.join(data_dir, filename)
