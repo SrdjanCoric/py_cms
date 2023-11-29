@@ -9,7 +9,7 @@ class CMSTest(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         self.client = app.test_client()
-        self.data_path = os.path.join(os.path.dirname(__file__), 'test', 'data')
+        self.data_path = os.path.join(os.path.dirname(__file__), 'data')
         os.makedirs(self.data_path, exist_ok=True)
 
     def sign_in_user(self, client):
