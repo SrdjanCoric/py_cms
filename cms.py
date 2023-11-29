@@ -95,5 +95,29 @@ def delete_file(filename):
 
     return redirect(url_for('index'))
 
+@app.route("/users/signin", methods=['GET'])
+def show_signin_form():
+    return render_template('signin.html')
+
+@app.route("/users/signin", methods=['POST'])
+def signin():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    if username == "admin" and password == "secret":
+        session['username'] = username
+        flash("Welcome!")
+        return redirect(url_for('index'))
+    else:
+        flash("Invalid credentials")
+        return render_template('signin.html'), 422
+
+@app.route("/users/signout", methods=['POST'])
+def signout():
+    session.pop('username', None)
+    flash("You have been signed out.")
+    return redirect(url_for('index'))
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5003)
