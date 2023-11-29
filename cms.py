@@ -1,4 +1,4 @@
-from flask import Flask, session, redirect, url_for, render_template, send_from_directory
+from flask import Flask, session, redirect, url_for, request, render_template, send_from_directory
 import os
 
 from markdown import markdown
@@ -31,6 +31,33 @@ def file_content(filename):
     else:
         session['message'] = f"{filename} does not exist."
         return redirect(url_for('index'))
+
+@app.route("/<filename>/edit")
+def edit_file(filename):
+    root = os.path.abspath(os.path.dirname(__file__))
+    data_dir = os.path.join(root, "data")
+    file_path = os.path.join(data_dir, filename)
+
+    if os.path.isfile(file_path):
+        with open(file_path, 'r') as file:
+            content = file.read()
+        return render_template('edit.html', filename=filename, content=content)
+    else:
+        session['message'] = f"{filename} does not exist."
+        return redirect(url_for('index'))
+
+@app.route("/<filename>", methods=['POST'])
+def save_file(filename):
+    root = os.path.abspath(os.path.dirname(__file__))
+    data_dir = os.path.join(root, "data")
+    file_path = os.path.join(data_dir, filename)
+
+    content = request.form['content']
+    with open(file_path, 'w') as file:
+        file.write(content)
+
+    session['message'] = f"{filename} has been updated."
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=5003)

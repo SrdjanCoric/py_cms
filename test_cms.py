@@ -33,6 +33,22 @@ class CMSTest(unittest.TestCase):
         response = self.client.get("/")
         self.assertNotIn("notafile.ext does not exist", response.get_data(as_text=True))
 
+    def test_editing_document(self):
+        response = self.client.get("/changes.txt/edit")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("<textarea", response.get_data(as_text=True))
+        self.assertIn('<button type="submit"', response.get_data(as_text=True))
+
+    def test_updating_document(self):
+        response = self.client.post("/changes.txt", data={'content': "new content"})
+        self.assertEqual(response.status_code, 302)
+
+        follow_response = self.client.get(response.headers['Location'])
+        self.assertIn("changes.txt has been updated", follow_response.get_data(as_text=True))
+
+        with self.client.get("/changes.txt") as content_response:
+            self.assertEqual(content_response.status_code, 200)
+            self.assertIn("new content", content_response.get_data(as_text=True))
 
 if __name__ == '__main__':
     unittest.main()
