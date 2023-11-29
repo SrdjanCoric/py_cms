@@ -1,6 +1,7 @@
 from flask import Flask, session, redirect, url_for, request, render_template, send_from_directory, flash
 from functools import wraps
 import os
+import yaml
 
 from markdown import markdown
 
@@ -28,6 +29,11 @@ def require_signed_in_user(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def load_user_credentials():
+    filename = 'test_users.yml' if app.config['TESTING'] else 'users.yml'
+    credentials_path = os.path.join(os.path.dirname(__file__), filename)
+    with open(credentials_path, 'r') as file:
+        return yaml.safe_load(file)
 
 @app.route("/")
 def index():
@@ -122,10 +128,11 @@ def show_signin_form():
 
 @app.route("/users/signin", methods=['POST'])
 def signin():
+    credentials = load_user_credentials()
     username = request.form.get('username')
     password = request.form.get('password')
 
-    if username == "admin" and password == "secret":
+    if username in credentials and credentials[username] == password:
         session['username'] = username
         flash("Welcome!")
         return redirect(url_for('index'))
