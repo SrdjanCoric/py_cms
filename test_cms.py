@@ -1,7 +1,7 @@
 import unittest
 import os
 import shutil
-from cms import app, get_data_path
+from cms import app
 
 class CMSTest(unittest.TestCase):
 
@@ -63,6 +63,28 @@ class CMSTest(unittest.TestCase):
         with self.client.get("/changes.txt") as content_response:
             self.assertEqual(content_response.status_code, 200)
             self.assertIn("new content", content_response.get_data(as_text=True))
+
+    def test_view_new_document_form(self):
+        response = self.client.get('/new')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("<input", response.get_data(as_text=True))
+        self.assertIn('<button type="submit"', response.get_data(as_text=True))
+
+    def test_create_new_document(self):
+        response = self.client.post('/create', data={'filename': 'test.txt'}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("test.txt has been created", response.get_data(as_text=True))
+
+        response = self.client.get('/')
+        self.assertIn("test.txt", response.get_data(as_text=True))
+
+    def test_create_new_document_without_filename(self):
+        response = self.client.post('/create', data={'filename': ''})
+        self.assertEqual(response.status_code, 422)
+        self.assertIn("A name is required", response.get_data(as_text=True))
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

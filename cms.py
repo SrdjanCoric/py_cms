@@ -60,5 +60,28 @@ def save_file(filename):
     flash(f"{filename} has been updated.")
     return redirect(url_for('index'))
 
+@app.route("/new")
+def new_document():
+    return render_template('new.html')
+
+@app.route("/create", methods=['POST'])
+def create_file():
+    filename = request.form.get('filename', '').strip()
+    data_dir = get_data_path()
+    file_path = os.path.join(data_dir, filename)
+
+    if len(filename) == 0:
+        flash("A name is required.")
+        return render_template('new.html'), 422
+    elif os.path.exists(file_path):
+        flash(f"{filename} already exists.")
+        return render_template('new.html'), 422
+    else:
+        with open(file_path, 'w') as file:
+            file.write("")
+        flash(f"{filename} has been created.")
+        return redirect(url_for('index'))
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5003)
